@@ -75,16 +75,17 @@ async fn main() -> surrealdb::Result<()> {
     };
     // Create a new district with the given name
 
-    let rangpur_dist: Vec<Record> = db.create("district").content(&rangpur).await?;
-    dbg!(rangpur_dist);
-    let dinajpur_dist: Vec<Record> = db.create("district").content(&dinajpur).await?;
-    dbg!(dinajpur_dist);
-    let kurigram_dist: Vec<Record> = db.create("district").content(&kurigram).await?;
-    dbg!(kurigram_dist);
+    // let rangpur_dist: Vec<Record> = db.create("district").content(&rangpur).await?;
+    // dbg!(rangpur_dist);
+    // let dinajpur_dist: Vec<Record> = db.create("district").content(&dinajpur).await?;
+    // dbg!(dinajpur_dist);
+    // let kurigram_dist: Vec<Record> = db.create("district").content(&kurigram).await?;
+    // dbg!(kurigram_dist);
+
 
     // Update the rangpur climate rainy to Dry
     // let update_rangpur_climate: Option<Record> = db
-    //     .update(("district", "d76pgexuwag6cq56a3hb"))
+    //     .update(("district", "3pwsqev7kq3gerr6lzpu"))
     //     .merge(District {
     //         climate: "Dry".to_string(),
     //         ..rangpur
@@ -98,18 +99,18 @@ async fn main() -> surrealdb::Result<()> {
     struct ModifyNumberOfThana {
         number_of_thana: usize,
     }
-    // let update_number_of_thana_of_rangpur: Option<Record> = db
-    //     .update(("district", "d76pgexuwag6cq56a3hb"))
-    //     .merge(ModifyNumberOfThana { number_of_thana: 2 })
-    //     .await?;
+    let update_number_of_thana_of_rangpur: Option<Record> = db
+        .update(("district", "3pwsqev7kq3gerr6lzpu"))
+        .merge(ModifyNumberOfThana { number_of_thana: 2 })
+        .await?;
 
-    // dbg!(update_number_of_thana_of_rangpur);
+    dbg!(update_number_of_thana_of_rangpur);
 
     // Update an vec field of the rangpur district using sql query
     let query = r#"
     UPDATE district
     SET thana += ['pirgacha', 'pirgong']
-    WHERE  id= "district:72gnrblsg0m53pxedah4"
+    WHERE  id= "district:3pwsqev7kq3gerr6lzpu"
     "#;
     db.query(query).await?;
 
@@ -117,7 +118,7 @@ async fn main() -> surrealdb::Result<()> {
     let query = r#"
      UPDATE district
      SET number_of_thana = array::len(thana)
-    // WHERE  id= "district:72gnrblsg0m53pxedah4"
+    // WHERE  id= "district:3pwsqev7kq3gerr6lzpu"
     "#;
     db.query(query).await?;
 
