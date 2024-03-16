@@ -15,15 +15,16 @@ struct District {
 }
 
 
-
 #[derive(Debug, Deserialize)]
 struct Record {
     id: Thing,
     name: String,
     number_of_thana: usize,
     thana: Vec<String>,
+    #[allow(unused)]
     climate: String,
     population: usize,
+    #[allow(unused)]
     international_boder: bool,
     timestamp: DateTime<Utc>,
 }
@@ -95,32 +96,32 @@ async fn main() -> surrealdb::Result<()> {
     // dbg!(update_rangpur_climate);
 
     // we can update the struct field with the struct like that
-    #[derive(Debug, Serialize, Deserialize)]
-    struct ModifyNumberOfThana {
-        number_of_thana: usize,
-    }
-    let update_number_of_thana_of_rangpur: Option<Record> = db
-        .update(("district", "3pwsqev7kq3gerr6lzpu"))
-        .merge(ModifyNumberOfThana { number_of_thana: 2 })
-        .await?;
+    // #[derive(Debug, Serialize, Deserialize)]
+    // struct ModifyNumberOfThana {
+    //     number_of_thana: usize,
+    // }
+    // let update_number_of_thana_of_rangpur: Option<Record> = db
+    //     .update(("district", "3pwsqev7kq3gerr6lzpu"))
+    //     .merge(ModifyNumberOfThana { number_of_thana: 2 })
+    //     .await?;
 
-    dbg!(update_number_of_thana_of_rangpur);
+    // dbg!(update_number_of_thana_of_rangpur);
 
     // Update an vec field of the rangpur district using sql query
-    let query = r#"
-    UPDATE district
-    SET thana += ['pirgacha', 'pirgong']
-    WHERE  id= "district:3pwsqev7kq3gerr6lzpu"
-    "#;
-    db.query(query).await?;
+    // let query = r#"
+    // UPDATE district
+    // SET thana += ['pirgacha', 'pirgong']
+    // WHERE  id= "district:3pwsqev7kq3gerr6lzpu"
+    // "#;
+    // db.query(query).await?;
 
     //  update number_of_thana  according to the vector lenght of thana ()
-    let query = r#"
-     UPDATE district
-     SET number_of_thana = array::len(thana)
-    // WHERE  id= "district:3pwsqev7kq3gerr6lzpu"
-    "#;
-    db.query(query).await?;
+    // let query = r#"
+    //  UPDATE district
+    //  SET number_of_thana = array::len(thana)
+    // // WHERE  id= "district:3pwsqev7kq3gerr6lzpu"
+    // "#;
+    // db.query(query).await?;
 
       // delete column value
     // let query = r#"
@@ -132,17 +133,17 @@ async fn main() -> surrealdb::Result<()> {
 
     // Print every entry of the struct that select from database 
     // to extract the every filed of struct you have to need Record struct above.
-    let entries: Vec<Record> = db.select("district").await?;
-    entries.iter().for_each(|entry| {
-        println!("ID: {}", entry.id);   
-        println!("Total thana: {}", entry.number_of_thana);
-        println!("Name: {}", entry.name);
-        println!("Total population: {}", entry.population);
-        println!("Thana: {:?}", entry.thana);
-        println!("Created time: {}", entry.timestamp);
+    // let entries: Vec<Record> = db.select("district").await?;
+    // entries.iter().for_each(|entry| {
+    //     println!("ID: {}", entry.id);   
+    //     println!("Total thana: {}", entry.number_of_thana);
+    //     println!("Name: {}", entry.name);
+    //     println!("Total population: {}", entry.population);
+    //     println!("Thana: {:?}", entry.thana);
+    //     println!("Created time: {}", entry.timestamp);
 
        
-    });
+    // });
 
     // delete COLUMN
     // let query = r#"
@@ -152,8 +153,13 @@ async fn main() -> surrealdb::Result<()> {
     // "#;
     // db.query(query).await?;
 
+    
 
+    // Delete single record
+    // let single_entry_delete : Option<Record> = db.delete(("district", "3pwsqev7kq3gerr6lzpu")).await?;
+    // dbg!(single_entry_delete);
 
+    
     // Delete all records in a table
     // db.delete("district").await?;
 
