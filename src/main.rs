@@ -119,7 +119,8 @@ async fn main() -> surrealdb::Result<()> {
     // let query = r#"
     //  UPDATE district
     //  SET number_of_thana = array::len(thana)
-    // // WHERE  id= "district:3pwsqev7kq3gerr6lzpu"
+
+    
     // "#;
     // db.query(query).await?;
 
