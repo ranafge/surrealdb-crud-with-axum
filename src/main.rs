@@ -10,7 +10,7 @@ struct District {
     thana: Vec<String>,
     climate: String,
     population: usize,
-    international_boder: bool,
+    international_border: bool,
     timestamp: DateTime<Utc>,
 }
 
@@ -25,7 +25,7 @@ struct Record {
     climate: String,
     population: usize,
     #[allow(unused)]
-    international_boder: bool,
+    international_border: bool,
     timestamp: DateTime<Utc>,
 }
 
@@ -42,8 +42,8 @@ async fn main() -> surrealdb::Result<()> {
 
     db.use_ns("bd").use_db("bd").await?;
     // Delete the table District
-    // let delete_table: Vec<Record> = db.delete("district").await?;
-    // dbg!(delete_table);
+    let delete_table: Vec<Record> = db.delete("district").await?;
+    dbg!(delete_table);
 
     let rangpur = District {
         name: "Rangpur".to_string(),
@@ -51,7 +51,7 @@ async fn main() -> surrealdb::Result<()> {
         thana: vec!["Mithapukur".to_string()],
         climate: "Rainny".to_string(),
         population: 10_000_00,
-        international_boder: false,
+        international_border: false,
         timestamp: Utc::now(),
     };
 
@@ -61,7 +61,7 @@ async fn main() -> surrealdb::Result<()> {
         thana: vec!["Fulbari".to_string()],
         climate: "Wet".to_string(),
         population: 20_000_00,
-        international_boder: false,
+        international_border: false,
         timestamp: Utc::now(),
     };
 
@@ -71,17 +71,17 @@ async fn main() -> surrealdb::Result<()> {
         thana: vec!["Bhurungamari".to_string()],
         climate: "Sunny".to_string(),
         population: 30_000_00,
-        international_boder: true,
+        international_border: true,
         timestamp: Utc::now(),
     };
     // Create a new district with the given name
 
-    // let rangpur_dist: Vec<Record> = db.create("district").content(&rangpur).await?;
-    // dbg!(rangpur_dist);
-    // let dinajpur_dist: Vec<Record> = db.create("district").content(&dinajpur).await?;
-    // dbg!(dinajpur_dist);
-    // let kurigram_dist: Vec<Record> = db.create("district").content(&kurigram).await?;
-    // dbg!(kurigram_dist);
+    let rangpur_dist: Vec<Record> = db.create("district").content(&rangpur).await?;
+    dbg!(rangpur_dist);
+    let dinajpur_dist: Vec<Record> = db.create("district").content(&dinajpur).await?;
+    dbg!(dinajpur_dist);
+    let kurigram_dist: Vec<Record> = db.create("district").content(&kurigram).await?;
+    dbg!(kurigram_dist);
 
 
     // Update the rangpur climate rainy to Dry
@@ -119,32 +119,30 @@ async fn main() -> surrealdb::Result<()> {
     // let query = r#"
     //  UPDATE district
     //  SET number_of_thana = array::len(thana)
-
-    
-    // "#;
+    // // "#;
     // db.query(query).await?;
 
       // delete column value
     // let query = r#"
     //     UPDATE  district
-    //        SET population = REMOVE 
+    //     SET population = REMOVE 
     //     WHERE id="district:72gnrblsg0m53pxedah4"
     // "#;
     // db.query(query).await?;
 
     // Print every entry of the struct that select from database 
     // to extract the every filed of struct you have to need Record struct above.
-    // let entries: Vec<Record> = db.select("district").await?;
-    // entries.iter().for_each(|entry| {
-    //     println!("ID: {}", entry.id);   
-    //     println!("Total thana: {}", entry.number_of_thana);
-    //     println!("Name: {}", entry.name);
-    //     println!("Total population: {}", entry.population);
-    //     println!("Thana: {:?}", entry.thana);
-    //     println!("Created time: {}", entry.timestamp);
+    let entries: Vec<Record> = db.select("district").await?;
+    entries.iter().for_each(|entry| {
+        println!("ID: {}", entry.id);   
+        println!("Total thana: {}", entry.number_of_thana);
+        println!("Name: {}", entry.name);
+        println!("Total population: {}", entry.population);
+        println!("Thana: {:?}", entry.thana);
+        println!("Created time: {}", entry.timestamp);
 
        
-    // });
+    });
 
     // delete COLUMN
     // let query = r#"
