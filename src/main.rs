@@ -14,7 +14,6 @@ struct District {
     timestamp: DateTime<Utc>,
 }
 
-
 #[derive(Debug, Deserialize)]
 struct Record {
     id: Thing,
@@ -38,7 +37,6 @@ async fn main() -> surrealdb::Result<()> {
         password: "test12345",
     })
     .await?;
-
 
     db.use_ns("bd").use_db("bd").await?;
     // Delete the table District
@@ -83,7 +81,6 @@ async fn main() -> surrealdb::Result<()> {
     let kurigram_dist: Vec<Record> = db.create("district").content(&kurigram).await?;
     dbg!(kurigram_dist);
 
-
     // Update the rangpur climate rainy to Dry
     // let update_rangpur_climate: Option<Record> = db
     //     .update(("district", "3pwsqev7kq3gerr6lzpu"))
@@ -122,46 +119,40 @@ async fn main() -> surrealdb::Result<()> {
     // // "#;
     // db.query(query).await?;
 
-      // delete column value
+    // delete column value
     // let query = r#"
     //     UPDATE  district
-    //     SET population = REMOVE 
+    //     SET population = REMOVE
     //     WHERE id="district:72gnrblsg0m53pxedah4"
     // "#;
     // db.query(query).await?;
 
-    // Print every entry of the struct that select from database 
+    // Print every entry of the struct that select from database
     // to extract the every filed of struct you have to need Record struct above.
     let entries: Vec<Record> = db.select("district").await?;
     entries.iter().for_each(|entry| {
-        println!("ID: {}", entry.id);   
+        println!("ID: {}", entry.id);
         println!("Total thana: {}", entry.number_of_thana);
         println!("Name: {}", entry.name);
         println!("Total population: {}", entry.population);
         println!("Thana: {:?}", entry.thana);
         println!("Created time: {}", entry.timestamp);
-
-       
     });
 
     // delete COLUMN
     // let query = r#"
     //     UPDATE  District
-    //        SET population = REMOVE 
+    //        SET population = REMOVE
     //     WHERE id="District:x3we856001c2ibzweexz"
     // "#;
     // db.query(query).await?;
-
-    
 
     // Delete single record
     // let single_entry_delete : Option<Record> = db.delete(("district", "3pwsqev7kq3gerr6lzpu")).await?;
     // dbg!(single_entry_delete);
 
-    
     // Delete all records in a table
     // db.delete("district").await?;
-
 
     Ok(())
 }
