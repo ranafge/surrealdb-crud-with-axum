@@ -1,3 +1,5 @@
+use std::env;
+
 use axum::{routing::post, Json, Router};
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
@@ -45,15 +47,19 @@ async fn create_new_district(Json(district): Json<District>) -> String {
 
     format!("Added the district: {:?}", new_entry)
 }
-
+use dotenv::dotenv;
 #[tokio::main]
 async fn main() -> surrealdb::Result<()> {
-    let app = Router::new().route("/districts", post(create_new_district));
-    let listener = TcpListener::bind("127.0.0.1:3000").await.unwrap();
-    dbg!("Server listening on port {}", "localhost:3000");
-    axum::serve(listener, app.into_make_service())
-        .await
-        .unwrap();
+    dotenv().ok();
+    let db_url = env::var("db_url").unwrap();
+    
+    println!("the db urli si {}", db_url);
+    // let app = Router::new().route("/districts", post(create_new_district));
+    // let listener = TcpListener::bind("127.0.0.1:3000").await.unwrap();
+    // dbg!("Server listening on port {}", "localhost:3000");
+    // axum::serve(listener, app.into_make_service())
+    //     .await
+    //     .unwrap();
 
     Ok(())
 }

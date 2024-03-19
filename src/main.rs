@@ -1,3 +1,5 @@
+use std::env;
+
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::Thing;
@@ -27,14 +29,16 @@ struct Record {
     international_border: bool,
     timestamp: DateTime<Utc>,
 }
-
+use dotenv::dotenv;
 #[tokio::main]
 async fn main() -> surrealdb::Result<()> {
-    let db = Surreal::new::<Wss>("generalpione.preciqprojects.com").await?;
+    dotenv().ok();
+
+    let db = Surreal::new::<Wss>(env::var("db_url").unwrap()).await?;
 
     db.signin(Root {
-        username: "root",
-        password: "test12345",
+        username: env::var("db_username").unwrap().as_str(),
+        password: env::var("db_password").unwrap().as_str(),
     })
     .await?;
 
