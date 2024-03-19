@@ -22,14 +22,16 @@ struct Record {
     id: Thing,
 }
 
+
 async fn create_new_district(Json(district): Json<District>) -> String {
+    dotenv().ok();
     println!("Create new district handler called ");
-    let db = Surreal::new::<Wss>("generalpione.preciqprojects.com")
+    let db = Surreal::new::<Wss>(env::var("db_url").unwrap())
         .await
         .expect("Error: Unable to connect to surreal db instance");
     db.signin(Root {
-        username: "root",
-        password: "test12345",
+        username: env::var("db_username").unwrap().as_str(),
+        password: env::var("db_password").unwrap().as_str(),
     })
     .await
     .expect("Error: Unable to login to Surreal DB instance with credentials.");
@@ -50,16 +52,13 @@ async fn create_new_district(Json(district): Json<District>) -> String {
 use dotenv::dotenv;
 #[tokio::main]
 async fn main() -> surrealdb::Result<()> {
-    dotenv().ok();
-    let db_url = env::var("db_url").unwrap();
-    
-    println!("the db urli si {}", db_url);
-    // let app = Router::new().route("/districts", post(create_new_district));
-    // let listener = TcpListener::bind("127.0.0.1:3000").await.unwrap();
-    // dbg!("Server listening on port {}", "localhost:3000");
-    // axum::serve(listener, app.into_make_service())
-    //     .await
-    //     .unwrap();
+
+    let app = Router::new().route("/districts", post(create_new_district));
+    let listener = TcpListener::bind("127.0.0.1:3000").await.unwrap();
+    dbg!("Server listening on port {}", "localhost:3000");
+    axum::serve(listener, app.into_make_service())
+        .await
+        .unwrap();
 
     Ok(())
 }
