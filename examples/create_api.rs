@@ -1,9 +1,8 @@
-use std::env;
-
-use axum::{routing::post, Json, Router};
-use once_cell::sync::Lazy;
+use std::{env, sync::Arc};
+use dotenv::dotenv;
+use axum::{routing::post, Extension, Json, Router};
 use serde::{Deserialize, Serialize};
-use surrealdb::{engine::remote::ws::Wss, opt::auth::Root, sql::Thing, Surreal};
+use surrealdb::{engine::remote::ws::{Client, Wss}, opt::auth::Root, sql::Thing, Surreal};
 use tokio::net::TcpListener;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -22,6 +21,41 @@ struct Record {
     id: Thing,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+struct UpdateDistrictPopulation {
+    id: String,
+    population: usize,
+}
+
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Population {
+    population: usize,
+}
+
+type Db = Extension<Arc<Surreal<Client>>>;
+async fn create_db_instance() -> Surreal<Client> {
+    dotenv().ok();
+    let db = Surreal::new::<Wss>(env::var("db_url").unwrap().as_str())
+         .await.expect("Error: Unable to connect to surrealdb instance");
+   db.signin(Root{
+    username: env::var("db_username").unwrap().as_str(),
+    password: env::var("db_password").unwrap().as_str(),
+ 
+   }).await.expect("Error: Unable to login to Surreal DB instance with credentials");
+   db.use_ns("bd").use_db("bd").await.expect("Error: Unable to connect to specified namespace/database");
+   db
+}
+
+async fn update_population_of_existing_district(Extension(db_instance): Db, Json(update_distr_population): Json<UpdateDistrictPopulation>) -> String{
+    let id = format!("{}", update_distr_population.id);
+    let update_distr_population: Option<Record>  = db_instance.update(("table_districts", id)).merge(
+        Population {
+            population: update_distr_population.population,
+        }
+    ).await.expect("Error: Unable to update population");
+    format!("Update population of existing district: {:?}", update_distr_population)
+}
 
 async fn create_new_district(Json(district): Json<District>) -> String {
     dotenv().ok();
@@ -42,18 +76,21 @@ async fn create_new_district(Json(district): Json<District>) -> String {
         .expect("Error: Unable to to specified namespace/database");
 
     let new_entry: Vec<Record> = db
-        .create("table_of_districts_rana")
+        .create("table_districts")
         .content(district)
         .await
         .expect("Error: Unable to create new entry");
 
     format!("Added the district: {:?}", new_entry)
 }
-use dotenv::dotenv;
+
 #[tokio::main]
 async fn main() -> surrealdb::Result<()> {
-
-    let app = Router::new().route("/districts", post(create_new_district));
+    let unified_db_instance = Arc::new(create_db_instance().await);
+    let app = Router::new().route("/districts", post(create_new_district))
+    .route("/update-districts", post(update_population_of_existing_district))
+    .layer(Extension(unified_db_instance))
+    ;
     let listener = TcpListener::bind("127.0.0.1:3000").await.unwrap();
     dbg!("Server listening on port {}", "localhost:3000");
     axum::serve(listener, app.into_make_service())
