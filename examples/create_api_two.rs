@@ -23,7 +23,7 @@ struct District {
     id: String,
     population: usize,
     climate: String,
-    international_border: String,
+    international_border: bool,
     country: String,
     immediate_upper_division: String,
 }
@@ -111,6 +111,8 @@ async fn delete_district(
     format!("Deleting the district from the database: {:?}", deleted_entry)
 }
 
+// async fn 
+
 
 
 // End for function handler
@@ -122,7 +124,8 @@ async fn main() -> surrealdb::Result<()> {
         .route("/districts", post(create_new_district))
         .route("/update_districts", post(update_pop_of_existing_district))
         .route("/districts/:id", delete(delete_district))
-        .layer(Extension(unified_db_instance));
+        .route("path", method_router)
+                .layer(Extension(unified_db_instance));
 
     let listener = TcpListener::bind("127.0.0.1:3000").await.unwrap();
     dbg!("Server listening on port 3000");
