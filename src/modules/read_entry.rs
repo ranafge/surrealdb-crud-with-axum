@@ -1,12 +1,12 @@
 use dotenv::dotenv;
 use serde::Deserialize;
 use std::env;
-use surrealdb::{engine::remote::ws::Wss, opt::auth::Root, sql::Thing, Surreal};
+use surrealdb::{engine::remote::ws::Wss, opt::auth::Root, Surreal};
 
-#[derive(Debug, Deserialize)]
-struct Record {
-    id: Thing
-}
+// #[derive(Debug, Deserialize)]
+// struct Record {
+//     id: Thing
+// }
 
 
 #[derive(Debug, Deserialize)]
