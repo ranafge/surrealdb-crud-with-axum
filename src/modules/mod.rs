@@ -5,12 +5,17 @@ mod hello_world;
 mod db_instance;
 mod read_entry;
 mod create_entry;
+mod  update_entry;
+
+
 
 
 use hello_world::hello;
 use read_entry::read_entries;
 use db_instance::create_db_instance;
 use create_entry::create_new_district;
+use update_entry::update_population;
+
 
 
 
@@ -20,6 +25,7 @@ pub async fn create_routes() -> Router {
     Router::new().route("/", get(hello))
     .route("/districts", get(read_entries))
     .route("/create_entry", post(create_new_district))
+    .route("/update_population", post(update_population))
     .layer(Extension(unified_db_instance  ))
 
 

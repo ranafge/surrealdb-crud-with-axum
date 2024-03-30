@@ -12,7 +12,7 @@ struct Record {
 #[derive(Debug, Deserialize)]
 struct Entry {
     
-
+    name: String,
     population: usize,
     climate: String,
     international_border: bool,
@@ -32,19 +32,19 @@ pub async fn read_entries() -> String   {
 
     db.use_ns(env::var("use_ns").unwrap().as_str()).use_db(env::var("use_db").unwrap().as_str()).await.expect("Error: unable to specified namespace/database");
 
-    let entries:Vec<Entry> = db.select("district_rana").await.expect("0");
-        //  entries.iter().for_each(|entry| {;
+    let entries:Vec<Entry> = db.select("district_rana").await.expect("Unable to read database entries");
 
-//     println!("{}", entry.id);
-//     println!("{}", entry.climate);
-//     println!("{}", entry.country);
-//     println!("{}", entry.international_border);
-//     println!("{}", entry.immediate_upper_division);
-//     println!("{}", entry.population);
+    entries.iter().for_each(|entry| {
+    println!("{}", entry.name);
+    println!("{}", entry.climate);
+    println!("{}", entry.country);
+    println!("{}", entry.international_border);
+    println!("{}", entry.immediate_upper_division);
+    println!("{}", entry.population);
   
 
     
-// });
+});
 
 
     format!("The database entities are: {:?}", &entries)
