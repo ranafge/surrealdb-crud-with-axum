@@ -22,7 +22,7 @@ use delete_entry::delete_district;
 
 
 pub async fn create_routes() -> Router {
-    
+
 
 
     let unified_db_instance = Arc::new(create_db_instance().await);
@@ -32,6 +32,9 @@ pub async fn create_routes() -> Router {
     .route("/update_population", post(update_population))
     .route("/district/:id", delete(delete_district))
     .layer(Extension(unified_db_instance  ))
+    .layer(tracing_subscriber::fmt()
+    .with_max_level(tracing::Level::DEBUG)
+    .init())
 
 
 

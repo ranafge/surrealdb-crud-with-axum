@@ -23,11 +23,14 @@ struct Record {
 
 
 
+use tracing::{info, debug};
 pub async fn update_population(Extension(db_instance): Db, Json(population): Json<UpdatePopulation>) -> String {
+    info!("Updating population");
     let id = format!("{}", population.id);
     let update_population_entry:Option<Record> = db_instance.update(("district_rana", id))
         .merge( Population { population: population.population} )
         .await.expect("Error: Unable to update population   entry");
+    debug!(" Database entry updated");
     format!("Updated the district population : {:?}", update_population_entry)
 
 }
