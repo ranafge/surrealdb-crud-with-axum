@@ -22,6 +22,9 @@ use delete_entry::delete_district;
 
 
 pub async fn create_routes() -> Router {
+    
+
+
     let unified_db_instance = Arc::new(create_db_instance().await);
     Router::new().route("/", get(hello))
     .route("/districts", get(read_entries))
