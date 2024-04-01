@@ -1,12 +1,14 @@
 use std::sync::Arc;
 
-use axum::{routing::{delete, get, post}, Extension, Router};
+use axum::{middleware::{self, FromExtractor}, routing::{delete, get, post}, Extension, Router};
 mod hello_world;
 mod db_instance;
 mod read_entry;
 mod create_entry;
 mod  update_entry;
 mod delete_entry;
+mod my_middleware;
+mod tracing_middleware;
 
 
 
@@ -16,14 +18,14 @@ use db_instance::create_db_instance;
 use create_entry::create_new_district;
 use update_entry::update_population;
 use delete_entry::delete_district;
+use my_middleware::my_middleware;
+
 
 
 
 
 
 pub async fn create_routes() -> Router {
-
-
 
     let unified_db_instance = Arc::new(create_db_instance().await);
     Router::new().route("/", get(hello))
@@ -32,9 +34,11 @@ pub async fn create_routes() -> Router {
     .route("/update_population", post(update_population))
     .route("/district/:id", delete(delete_district))
     .layer(Extension(unified_db_instance  ))
+    .layer(middleware::from_fn(my_middleware))
     .layer(tracing_subscriber::fmt()
     .with_max_level(tracing::Level::DEBUG)
     .init())
+    
 
 
 

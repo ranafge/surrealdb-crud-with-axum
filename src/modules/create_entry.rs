@@ -25,16 +25,17 @@ struct Record {
 
 }
 
-use tracing::{info, debug};
+
 
 pub async fn create_new_district(Extension(db_instance): Db, Json(district): Json<District>) -> String {
-    info!("You are going to create a new district");
+    tracing::info!("You are going to create a new district");
     let new_entry: Vec<Record> = db_instance
 
         .create("district_rana")
         .content(district)
         .await
         .expect("Error: Unable to create district_rana table");
-    debug!(" Creating database entry complete");
+    tracing::debug!(" Creating database entry complete");
+ 
     format!("Added the district to the database : {:?}", new_entry)
 }
